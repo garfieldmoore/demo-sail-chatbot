@@ -32,3 +32,43 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
 }
+
+/* Custom ChatKit greeting overlay styles */
+.chatkit-greeting-overlay {
+  pointer-events: none; /* keep non-interactive like existing layout */
+}
+.chatkit-greeting-inner {
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0.5rem 1rem;
+  max-width: 48rem;
+}
+.chatkit-greeting-logo {
+  width: 4.5rem; /* 72px */
+  height: 4.5rem;
+  object-fit: contain;
+  margin-bottom: 0.5rem;
+  border-radius: 0.5rem;
+  background: transparent;
+}
+.chatkit-greeting-title {
+  font-weight: 700;
+  font-size: 1.375rem; /* ~22px */
+  line-height: 1.1;
+  color: var(--foreground);
+}
+.chatkit-greeting-role {
+  margin-top: 0.5rem;
+  color: #6b7280; /* zinc-500 */
+  font-size: 0.875rem;
+  max-width: 44rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .chatkit-greeting-role {
+    color: #9ca3af; /* lighter in dark mode */
+  }
+}

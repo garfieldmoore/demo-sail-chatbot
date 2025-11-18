@@ -380,14 +380,18 @@ export function ChatKitPanel({
           role/capabilities line underneath. This sits centered in the panel
           and hides once the chat starts. */}
       {!blockingError && !isInitializingSession && showSubGreeting && (
-        <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-          <div className="flex flex-col items-center">
-            <div className="font-semibold text-2xl md:text-3xl text-center text-foreground">
-              {GREETING}
-            </div>
-            <div className="mt-3 max-w-2xl text-center text-sm text-zinc-500 dark:text-zinc-400">
-              {CHATBOT_ROLE}
-            </div>
+        <div className="absolute inset-0 pointer-events-none flex items-center justify-center chatkit-greeting-overlay">
+          <div className="flex flex-col items-center chatkit-greeting-inner">
+            {/* Logo: place `chat-logo.png` in `public/` and reference `/chat-logo.png` */}
+            <img
+              src="/chat-logo.png"
+              alt="Chat logo"
+              className="chatkit-greeting-logo"
+              width={96}
+              height={96}
+            />
+            <div className="chatkit-greeting-title">{GREETING}</div>
+            <div className="chatkit-greeting-role">{CHATBOT_ROLE}</div>
           </div>
         </div>
       )}
