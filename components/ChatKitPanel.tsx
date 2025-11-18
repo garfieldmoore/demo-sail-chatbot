@@ -336,13 +336,12 @@ export function ChatKitPanel({
         if (detail && typeof detail === "object") {
           // Common payloads may include `messages` or `length` information.
           // Be defensive: if we detect any indication of messages, hide.
-          // @ts-ignore
           const any = detail as { messages?: unknown };
           if (Array.isArray(any.messages) && any.messages.length > 0) {
             setShowSubGreeting(false);
           }
         }
-      } catch (e) {
+      } catch {
         // swallow — we only use this as a hint to hide the sub-greeting
       }
     },
