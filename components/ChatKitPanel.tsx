@@ -6,6 +6,7 @@ import {
   STARTER_PROMPTS,
   PLACEHOLDER_INPUT,
   GREETING,
+  CHATBOT_ROLE,
   CREATE_SESSION_ENDPOINT,
   WORKFLOW_ID,
   getThemeConfig,
@@ -61,6 +62,7 @@ export function ChatKitPanel({
       : "pending"
   );
   const [widgetInstanceKey, setWidgetInstanceKey] = useState(0);
+  const [showSubGreeting, setShowSubGreeting] = useState(true);
 
   const setErrorState = useCallback((updates: Partial<ErrorState>) => {
     setErrors((current) => ({ ...current, ...updates }));
@@ -268,7 +270,10 @@ export function ChatKitPanel({
       ...getThemeConfig(theme),
     },
     startScreen: {
-      greeting: GREETING,
+      // Render the greeting ourselves so we can control exact layout and
+      // typography. Leave the built-in ChatKit greeting empty to avoid
+      // duplicate text.
+      greeting: "",
       prompts: STARTER_PROMPTS,
     },
     composer: {
@@ -316,12 +321,30 @@ export function ChatKitPanel({
     },
     onResponseEnd: () => {
       onResponseEnd();
+      // Hide the sub-greeting when the assistant has produced a response
+      setShowSubGreeting(false);
     },
     onResponseStart: () => {
       setErrorState({ integration: null, retryable: false });
+      // Hide the sub-greeting as soon as a response starts streaming
+      setShowSubGreeting(false);
     },
-    onThreadChange: () => {
+    onThreadChange: (detail?: unknown) => {
       processedFacts.current.clear();
+      // If the thread change includes messages, hide the sub-greeting.
+      try {
+        if (detail && typeof detail === "object") {
+          // Common payloads may include `messages` or `length` information.
+          // Be defensive: if we detect any indication of messages, hide.
+          // @ts-ignore
+          const any = detail as { messages?: unknown };
+          if (Array.isArray(any.messages) && any.messages.length > 0) {
+            setShowSubGreeting(false);
+          }
+        }
+      } catch (e) {
+        // swallow — we only use this as a hint to hide the sub-greeting
+      }
     },
     onError: ({ error }: { error: unknown }) => {
       // Note that Chatkit UI handles errors for your users.
@@ -354,6 +377,21 @@ export function ChatKitPanel({
             : "block h-full w-full"
         }
       />
+      {/* Start-screen overlay: render our own greeting (large) and a smaller
+          role/capabilities line underneath. This sits centered in the panel
+          and hides once the chat starts. */}
+      {!blockingError && !isInitializingSession && showSubGreeting && (
+        <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+          <div className="flex flex-col items-center">
+            <div className="font-semibold text-2xl md:text-3xl text-center text-foreground">
+              {GREETING}
+            </div>
+            <div className="mt-3 max-w-2xl text-center text-sm text-zinc-500 dark:text-zinc-400">
+              {CHATBOT_ROLE}
+            </div>
+          </div>
+        </div>
+      )}
       <ErrorOverlay
         error={blockingError}
         fallbackMessage={
