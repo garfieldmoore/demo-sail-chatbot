@@ -11,6 +11,11 @@ export const STARTER_PROMPTS: StartScreenPrompt[] = [
     prompt: "What can you do?",
     icon: "circle-question",
   },
+  {
+    label: "plan a trip",
+    prompt: "plan a trip",
+    icon: "circle-question"
+  }
 ];
 
 export const PLACEHOLDER_INPUT = "where do you want to go";
